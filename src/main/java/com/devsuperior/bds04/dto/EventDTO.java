@@ -1,19 +1,35 @@
 package com.devsuperior.bds04.dto;
 
+import com.devsuperior.bds04.entities.City;
+import com.devsuperior.bds04.entities.Event;
+
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.PastOrPresent;
 import java.io.Serializable;
 import java.time.LocalDate;
-
-import com.devsuperior.bds04.entities.Event;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
 
 public class EventDTO implements Serializable {
 	private static final long serialVersionUID = 1L;
-	
+
 	private Long id;
+
+	@NotBlank(message = "Campo requerido")
 	private String name;
+
+//	@PastOrPresent(message = "A data do evento não pode ser passada")
 	private LocalDate date;
+
 	private String url;
+
+	@NotNull(message = "Campo requerido")
 	private Long cityId;
-	
+
+	private final List<CityDTO> cities = new ArrayList<>();
+
 	public EventDTO() {
 	}
 
@@ -24,13 +40,18 @@ public class EventDTO implements Serializable {
 		this.url = url;
 		this.cityId = cityId;
 	}
-	
-	public EventDTO(Event entity) {
-		id = entity.getId();
-		name = entity.getName();
-		date = entity.getDate();
-		url = entity.getUrl();
-		cityId = entity.getCity().getId();
+
+	public EventDTO(Event event) {
+		id = event.getId();
+		name = event.getName();
+		date = event.getDate();
+		url = event.getUrl();
+		cityId = event.getCity().getId();
+	}
+
+	public EventDTO(Event event, Set<City> cities) {
+		this(event);
+		cities.forEach(city -> this.cities.add(new CityDTO(city)));
 	}
 
 	public Long getId() {
@@ -71,5 +92,9 @@ public class EventDTO implements Serializable {
 
 	public void setCityId(Long cityId) {
 		this.cityId = cityId;
+	}
+
+	public List<CityDTO> getCities() {
+		return cities;
 	}
 }
